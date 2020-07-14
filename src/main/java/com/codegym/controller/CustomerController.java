@@ -5,12 +5,16 @@ import com.codegym.model.Province;
 import com.codegym.sevice.CustomerService;
 import com.codegym.sevice.ProvinceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Optional;
 
 @Controller
 public class CustomerController {
@@ -26,10 +30,19 @@ public class CustomerController {
     }
 
     @GetMapping("/")
-    public ModelAndView listCustomers(){
+    public ModelAndView listCustomers(@RequestParam("s") Optional<String> s,
+                                      @PageableDefault(size = 5,direction = Sort.Direction.ASC, sort = "id") Pageable pageable){
+        Page<Customer> customers;
         ModelAndView modelAndView = new ModelAndView("customer/list");
-        Iterable<Customer> list = customerService.findAll();
-        modelAndView.addObject("customers",list);
+
+        if (s.isPresent()){
+            customers= customerService.findAllByFirstNameContaining(s.get(),pageable);
+            modelAndView.addObject("s",s.get());
+        }else {
+             customers = customerService.findAll(pageable);
+        }
+
+        modelAndView.addObject("customers",customers);
         return modelAndView;
     }
 

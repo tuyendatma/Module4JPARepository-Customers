@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -42,6 +43,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @EnableJpaRepositories("com.codegym.repository")
 @ComponentScan("com.codegym")
+@EnableSpringDataWebSupport
 public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -71,6 +73,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
     public SpringResourceTemplateResolver templateResolver(){
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setApplicationContext(applicationContext);
+        templateResolver.setCharacterEncoding("UTF-8");
         templateResolver.setPrefix("/WEB-INF/views/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
@@ -87,6 +90,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
     @Bean
     public ThymeleafViewResolver viewResolver(){
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+        viewResolver.setCharacterEncoding("UTF-8");
         viewResolver.setTemplateEngine(templateEngine());
         return viewResolver;
     }
